@@ -1,0 +1,23 @@
+{
+    "name": "johnlivingston/civicrm-cleaner",
+    "type": "project",
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "drupal/coder": "^8.3"
+    },
+    "license": "AGPL-v3",
+    "authors": [
+        {
+            "name": "John Livingston",
+            "email": "git@john-livingston.fr"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "require": {
+        "pear/console_commandline": "^1.2"
+    }
+}
