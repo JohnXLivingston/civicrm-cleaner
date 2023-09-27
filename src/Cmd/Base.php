@@ -109,6 +109,8 @@ class Base {
   protected function output($data) {
     $line = '';
     foreach ($data as $value) {
+      // Removing line break and co:
+      $value = trim(preg_replace('/\s\s+/', ' ', $value));
       $line .= $value . '|';
     }
     fwrite($this->fpOutput, $line . "\n");

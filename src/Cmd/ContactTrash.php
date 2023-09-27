@@ -220,8 +220,8 @@ class ContactTrash extends Base {
   private function newResultLine($id) {
     $line = [];
     $line['id'] = '' . $id;
-    $line['error'] = '';
     $line['name'] = '';
+    $line['error'] = '';
     $line['deleted'] = 'N';
     return $line;
   }
