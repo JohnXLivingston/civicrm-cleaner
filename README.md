@@ -25,6 +25,7 @@ composer install --no-dev
 
 ```bash
 ./bin/cli.php --help
+./bin/cli.php contact_trash --run rollback -v --max 2  /tmp/result.csv
 ```
 
 ## Developpement

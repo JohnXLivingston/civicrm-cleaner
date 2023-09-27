@@ -57,4 +57,11 @@ class ProgressBar {
     return sprintf("%s%%[%s>%s] %s\r", $perc, str_repeat("=", $bar), str_repeat(" ", $width - $bar), $info);
   }
 
+  /**
+   * Returns the current step.
+   */
+  public function currentStep() {
+    return $this->current;
+  }
+
 }

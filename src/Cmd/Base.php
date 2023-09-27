@@ -109,9 +109,9 @@ class Base {
   protected function output($data) {
     $line = '';
     foreach ($data as $value) {
-      $line = $value . '|';
+      $line .= $value . '|';
     }
-    fwrite($this->fpOutput, $line . '\n');
+    fwrite($this->fpOutput, $line . "\n");
   }
 
   /**
