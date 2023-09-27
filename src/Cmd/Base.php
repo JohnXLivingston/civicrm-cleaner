@@ -15,6 +15,20 @@ class Base {
   protected $parserResult;
 
   /**
+   * Command arguments.
+   *
+   * @var array
+   */
+  protected $commandArgs;
+
+  /**
+   * Command options.
+   *
+   * @var array
+   */
+  protected $commandOptions;
+
+  /**
    * The output file path.
    *
    * @var string
@@ -44,6 +58,8 @@ class Base {
     if ($parser_result->command->options['verbose']) {
       $this->verbose = TRUE;
     }
+    $this->commandArgs = $parser_result->command->args;
+    $this->commandOptions = $parser_result->command->options;
   }
 
   /**
@@ -103,7 +119,7 @@ class Base {
    *
    * @var string $msg the message
    */
-  protected function log($msg) {
+  public function log($msg) {
     print($msg);
   }
 

@@ -3,6 +3,7 @@
 namespace CiviCleaner\Cmd;
 
 use Civi\Api4\Contact;
+use CiviCleaner\ProgressBar;
 
 /**
  * Handle deletion of trashed contacts.
@@ -21,11 +22,18 @@ class ContactTrash extends Base {
   public function __construct($parser_result) {
     parent::__construct($parser_result);
 
+    if ($this->verbose) {
+      $this->log("Command arguments:\n");
+      $this->log(print_r($this->commandArgs, TRUE));
+      $this->log("Command options:\n");
+      $this->log(print_r($this->commandOptions, TRUE));
+    }
+
     $this->buildGetContactIdsApi();
   }
 
   /**
-   * Define the command.
+   * Define the command (name, options and arguments).
    *
    * @param Console_CommandLine $parser
    *   The Console_CommandLine parse.
@@ -45,6 +53,12 @@ class ContactTrash extends Base {
       'description' => 'Prints more verbose informations',
       'action' => 'StoreTrue',
     ]);
+
+    $command->addOption('usleep', [
+      'description' => 'The script can wait X milliseconds for each loop, if you want to preserve server resources',
+      'long_name' => '--usleep',
+      'action' => 'StoreInt',
+    ]);
   }
 
   /**
@@ -55,7 +69,17 @@ class ContactTrash extends Base {
 
     $this->log('Getting contacts IDs...');
     $contact_ids = $this->getContactsIds();
-    $this->log(print_r($contact_ids, TRUE));
+    $total = count($contact_ids);
+    $this->log('Number of found contact IDs: ' . $total);
+
+    $progress = new ProgressBar($total, $this);
+
+    foreach ($contact_ids as $id) {
+      if ($this->commandOptions['usleep']) {
+        usleep($this->commandOptions['usleep'] * 1000);
+      }
+      $progress->step();
+    }
   }
 
   /**
