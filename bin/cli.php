@@ -12,7 +12,7 @@ if (PHP_SAPI !== 'cli') {
   die("Can only be called in CLI mode");
 }
 
-require __DIR__ . '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 // To initialise the CiviCRM env, we have to eval `cv php:boot`.
 // This is the official way to do, see:
