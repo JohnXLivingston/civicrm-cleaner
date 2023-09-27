@@ -13,6 +13,7 @@ if (PHP_SAPI !== 'cli') {
 }
 
 require __DIR__ . '/../vendor/autoload.php';
+use CiviCleaner\Cmd\ContactTrash;
 
 // To initialise the CiviCRM env, we have to eval `cv php:boot`.
 // This is the official way to do, see:
@@ -36,20 +37,19 @@ catch (Throwable $e) {
 
 require_once 'Console/CommandLine.php';
 $parser = new Console_CommandLine([
-  'description' => 'Civicrm-cleaner CLI tool: allows to easily clean trashed contact on huge databases.'
+  'description' => 'Civicrm-cleaner CLI tool: allows to easily clean trashed contact on huge databases.',
 ]);
-$parser->addOption(
-  'test',
-  [
-    'short_name'  => '-t',
-    'long_name'   => '--test',
-    'description' => 'nothing'
-  ]
-);
+ContactTrash::defineCommand($parser);
 
 try {
   $result = $parser->parse();
-  print_r($result->options);
+  switch ($result->command_name) {
+    case 'contact_trash':
+      $ct = new ContactTrash($result);
+      $ct->start();
+      $ct->stop();
+      exit(0);
+  }
 }
 catch (Exception $exc) {
   $parser->displayError($exc->getMessage());

@@ -18,6 +18,10 @@
         }
     },
     "require": {
-        "pear/console_commandline": "^1.2"
+        "pear/console_commandline": "^1.2",
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {"CiviCleaner\\": "src/"}
     }
 }
