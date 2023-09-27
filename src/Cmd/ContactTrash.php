@@ -175,6 +175,10 @@ class ContactTrash extends Base {
         $tx->rollback();
         $line['error'] = $e;
       }
+      catch (\CRM_Core_Exception $e) {
+        $tx->rollback();
+        $line['error'] = $e;
+      }
       $this->output($line);
     }
   }

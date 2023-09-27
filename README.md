@@ -26,6 +26,9 @@ composer install --no-dev
 ```bash
 ./bin/cli.php --help
 ./bin/cli.php contact_trash --run rollback -v --max 2  /tmp/result.csv
+# Note: the script will append the current result to the output file.
+# You can add current date to prevent mixing execution results:
+./bin/cli.php contact_trash --run rollback -v --max 2 /tmp/result.$(date '+%Y-%m-%d.%H.%M.%S').csv
 ```
 
 ## Developpement
