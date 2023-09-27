@@ -30,7 +30,7 @@ try {
     die('Missing CRM_CampagnodonCivicrm_ExtensionUtil::path(), it seems that the CiviCRM env is not correctly set.');
   }
 }
-catch (Throwable $e) {
+catch (\Throwable $e) {
   echo "ERROR: " . $e . "\n";
   die('It seems that the CiviCRM env is not correctly set.');
 }
@@ -51,7 +51,7 @@ try {
       exit(0);
   }
 }
-catch (Exception $exc) {
+catch (\Exception $exc) {
   $parser->displayError($exc->getMessage());
   die();
 }
