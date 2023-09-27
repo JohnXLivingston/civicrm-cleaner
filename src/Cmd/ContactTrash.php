@@ -123,7 +123,7 @@ class ContactTrash extends Base {
         usleep($this->commandOptions['usleep'] * 1000);
       }
 
-      $line = $this->newResultLine();
+      $line = $this->newResultLine($id);
 
       $contact = Contact::get()
         ->setCheckPermissions(FALSE)
@@ -146,6 +146,10 @@ class ContactTrash extends Base {
       }
 
       $line['name'] = $contact['first_name'] . ' ' . $contact['last_name'];
+
+      // TODO: test something like:
+      // CRM_Financial_BAO_FinancialItem::checkContactPresent([$contactID], $error).
+      // And check others tests made in CiviCRM when deleting.
 
       if ($this->runMode !== 'run' && $this->runMode !== 'rollback') {
         // Test mode, nothing more to do.
@@ -213,7 +217,7 @@ class ContactTrash extends Base {
   /**
    * Returns a new result line, that will be usable in $this->output.
    */
-  private function newResultLine() {
+  private function newResultLine($id) {
     $line = [];
     $line['id'] = '' . $id;
     $line['error'] = '';

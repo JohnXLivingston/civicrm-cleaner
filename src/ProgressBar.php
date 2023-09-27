@@ -21,6 +21,15 @@ class ProgressBar {
   protected $total;
 
   /**
+   * Last progress print timestamp.
+   *
+   * We don't want to print progress too often.
+   *
+   * @var int
+   */
+  protected $lastPrint = 0;
+
+  /**
    * The calling Civicleaner/Cmd object, with a log method.
    *
    * @var Object
@@ -43,6 +52,11 @@ class ProgressBar {
    */
   public function step() {
     $this->current++;
+    $now = microtime(TRUE);
+    if ($this->lastPrint + 0.5 > $now) {
+      return;
+    }
+    $this->lastPrint = $now;
     $this->cmd->log($this->progress());
   }
 
