@@ -171,11 +171,7 @@ class ContactTrash extends Base {
           $line['deleted'] = 'Y';
         }
       }
-      catch (Throwable $e) {
-        $tx->rollback();
-        $line['error'] = $e;
-      }
-      catch (\CRM_Core_Exception $e) {
+      catch (\Throwable $e) {
         $tx->rollback();
         $line['error'] = $e;
       }
