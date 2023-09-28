@@ -38,6 +38,8 @@ Note: avoid running it as root. Add something like `sudo -u www-data` on front o
 
 For a full list of commands, options and arguments, use `--help`.
 
+Note: avoid using ctrl+c to stop the script. It could result in an incomplete output file.
+
 ## Developpement
 
 Install dev dependencies:
