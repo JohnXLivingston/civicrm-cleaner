@@ -53,3 +53,8 @@ To lint the code:
 ```bash
 ./vendor/bin/phpcs --standard=vendor/drupal/coder/coder_sniffer/Drupal bin/
 ```
+
+## Campagnodon
+
+This script is compatible with [Campagnodon](https://github.com/JohnXLivingston/campagnodon_civicrm/).
+It will auto-detect if you are using it.

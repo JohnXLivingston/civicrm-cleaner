@@ -31,6 +31,13 @@ class ContactTrash extends Base {
   private $stopAtTimestamp = FALSE;
 
   /**
+   * If Campagnodon is detected, will be TRUE.
+   *
+   * @var bool
+   */
+  private $useCampagnodon = FALSE;
+
+  /**
    * ContactTrash contructor.
    */
   public function __construct($parser_result) {
@@ -41,6 +48,11 @@ class ContactTrash extends Base {
       $this->log(print_r($this->commandArgs, TRUE));
       $this->log("Command options:\n");
       $this->log(print_r($this->commandOptions, TRUE));
+    }
+
+    if (class_exists('\Civi\Api4\CampagnodonTransaction')) {
+      $this->useCampagnodon = TRUE;
+      $this->log("Campagnodon detected\n");
     }
 
     $this->runMode = $this->commandOptions['run_mode'];
@@ -191,24 +203,40 @@ class ContactTrash extends Base {
       $line['name'] = $contact['first_name'] . ' ' . $contact['last_name'];
 
       /* Checking same constraints as CiviCRM deleteContact function. */
-      $check_contact_present_error = NULL;
-      if (\CRM_Financial_BAO_FinancialItem::checkContactPresent([$id], $check_contact_present_error)) {
-        $line['error'] = 'Contact is present in financial_item table.';
-        $this->output($line);
-        continue;
-      }
+      if (TRUE) {
+        $check_contact_present_error = NULL;
+        if (\CRM_Financial_BAO_FinancialItem::checkContactPresent([$id], $check_contact_present_error)) {
+          $line['error'] = 'Contact is present in financial_item table.';
+          $this->output($line);
+          continue;
+        }
 
-      $membershipTypeID = \CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
-        $id,
-        'id',
-        'member_of_contact_id'
-      );
-      if ($membershipTypeID) {
-        $line['error'] = 'Contact has membership types.';
-        $this->output($line);
-        continue;
+        $membershipTypeID = \CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
+          $id,
+          'id',
+          'member_of_contact_id'
+        );
+        if ($membershipTypeID) {
+          $line['error'] = 'Contact has membership types.';
+          $this->output($line);
+          continue;
+        }
       }
       /* END Checking same constraints as CiviCRM deleteContact function. */
+
+      if ($this->useCampagnodon) {
+        // phpcs:ignore Drupal.Classes.FullyQualifiedNamespace.UseStatementMissing
+        $campagnodon_transactions = \Civi\Api4\CampagnodonTransaction::get()
+          ->setCheckPermissions(FALSE)
+          ->addWhere('contact_id', '=', $contactId)
+          ->execute()
+          ->first();
+        if ($campagnodon_transactions) {
+          $line['error'] = 'Contact has Campagnodon Transactions.';
+          $this->output($line);
+          continue;
+        }
+      }
 
       if ($this->runMode !== 'run' && $this->runMode !== 'rollback') {
         // Test mode, nothing more to do.
