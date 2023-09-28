@@ -190,9 +190,25 @@ class ContactTrash extends Base {
 
       $line['name'] = $contact['first_name'] . ' ' . $contact['last_name'];
 
-      // TODO: test something like:
-      // CRM_Financial_BAO_FinancialItem::checkContactPresent([$contactID], $error).
-      // And check others tests made in CiviCRM when deleting.
+      /* Checking same constraints as CiviCRM deleteContact function. */
+      $check_contact_present_error = NULL;
+      if (\CRM_Financial_BAO_FinancialItem::checkContactPresent([$id], $check_contact_present_error)) {
+        $line['error'] = 'Contact is present in financial_item table.';
+        $this->output($line);
+        continue;
+      }
+
+      $membershipTypeID = \CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
+        $id,
+        'id',
+        'member_of_contact_id'
+      );
+      if ($membershipTypeID) {
+        $line['error'] = 'Contact has membership types.';
+        $this->output($line);
+        continue;
+      }
+      /* END Checking same constraints as CiviCRM deleteContact function. */
 
       if ($this->runMode !== 'run' && $this->runMode !== 'rollback') {
         // Test mode, nothing more to do.
@@ -224,6 +240,10 @@ class ContactTrash extends Base {
       }
       $this->output($line);
     }
+
+    // Force print the progress:
+    $progress->progress();
+    $this->log("\n");
   }
 
   /**
