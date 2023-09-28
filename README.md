@@ -13,6 +13,7 @@ Project maintainer: [John Livingston](https://www.john-livingston.fr).
 ## Installation
 
 Clone or download the repository in a subfolder of your CiviCRM directory.
+
 TODO: where exactly?
 
 Install production dependencies:
@@ -20,6 +21,8 @@ Install production dependencies:
 ```bash
 composer install --no-dev
 ```
+
+Note: avoid running it as root.
 
 ## Usage
 
@@ -30,6 +33,10 @@ composer install --no-dev
 # You can add current date to prevent mixing execution results:
 ./bin/cli.php contact_trash --run rollback -v --max 2 /tmp/result.$(date '+%Y-%m-%d.%H.%M.%S').csv
 ```
+
+Note: avoid running it as root. Add something like `sudo -u www-data` on front of these commands if you are connected as root.
+
+For a full list of commands, options and arguments, use `--help`.
 
 ## Developpement
 
