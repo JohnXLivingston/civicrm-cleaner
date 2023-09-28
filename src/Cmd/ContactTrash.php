@@ -24,6 +24,13 @@ class ContactTrash extends Base {
   private $runMode;
 
   /**
+   * If stop_at options is set, the timestamp at which we must stop.
+   *
+   * @var timestamp|false
+   */
+  private $stopAtTimestamp = FALSE;
+
+  /**
    * ContactTrash contructor.
    */
   public function __construct($parser_result) {
@@ -38,6 +45,18 @@ class ContactTrash extends Base {
 
     $this->runMode = $this->commandOptions['run_mode'];
     $this->log('Run mode is set to: ' . $this->runMode . "\n");
+
+    if ($this->commandOptions['stop_at']) {
+      $this->stopAtTimestamp = strtotime($this->commandOptions['stop_at']);
+      if ($this->stopAtTimestamp === FALSE) {
+        throw new \Exception('Invalid stop_at option.');
+      }
+      $this->log(
+        "The script will stop at: "
+        . date('Y-m-d\TH:i:s.Z\Z', $this->stopAtTimestamp)
+        . " \n"
+      );
+    }
 
     $this->buildGetContactIdsApi();
   }
@@ -88,6 +107,15 @@ class ContactTrash extends Base {
       'optional' => TRUE,
       'long_name' => '--max',
     ]);
+
+    $command->addOption('stop_at', [
+      'description' => 'A datetime at which the script must stop.'
+      . ' Format: any format accepted by the php strtotime function.'
+      . ' Example: 2023-09-28T10:30:30. You can also use: \'+1 hour\'.',
+      'action' => 'StoreString',
+      'optional' => TRUE,
+      'long_name' => '--stop-at',
+    ]);
   }
 
   /**
@@ -113,8 +141,17 @@ class ContactTrash extends Base {
 
     foreach ($contact_ids as $id) {
       if ($progress->currentStep() >= $total) {
+        // Force print the progress:
+        $progress->progress();
         $this->log("\n");
-        $this->log("Stopped because we reach the max (or the total number)\n");
+        $this->log("Stopped because we reached the max (or the total number of contacts)\n");
+        break;
+      }
+      if ($this->stopAtTimestamp !== FALSE && time() >= $this->stopAtTimestamp) {
+        // Force print the progress:
+        $progress->progress();
+        $this->log("\n");
+        $this->log("Stopped because we reached the stop at time\n");
         break;
       }
       $progress->step();

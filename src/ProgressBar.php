@@ -57,7 +57,7 @@ class ProgressBar {
       return;
     }
     $this->lastPrint = $now;
-    $this->cmd->log($this->progress());
+    $this->progress();
   }
 
   /**
@@ -68,7 +68,8 @@ class ProgressBar {
     $info = $this->current . '/' . $this->total;
     $perc = round(($this->current * 100) / $this->total);
     $bar = round(($width * $perc) / 100);
-    return sprintf("%s%%[%s>%s] %s\r", $perc, str_repeat("=", $bar), str_repeat(" ", $width - $bar), $info);
+    $s = sprintf("%s%%[%s>%s] %s\r", $perc, str_repeat("=", $bar), str_repeat(" ", $width - $bar), $info);
+    $this->cmd->log($s);
   }
 
   /**
