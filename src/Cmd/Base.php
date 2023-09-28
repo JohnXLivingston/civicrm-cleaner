@@ -76,6 +76,14 @@ class Base {
       'multiple' => FALSE,
       'optional' => FALSE,
     ]);
+
+    $command->addOption('yes', [
+      'description' => 'Force Y response to every confirmation prompt.',
+      'optional' => TRUE,
+      'short_name' => '-y',
+      'long_name' => '--yes',
+      'action' => 'StoreTrue',
+    ]);
   }
 
   /**
@@ -123,6 +131,35 @@ class Base {
    */
   public function log($msg) {
     print($msg);
+  }
+
+  /**
+   * Ask for confirmation.
+   *
+   * If the --yes option is used, skips.
+   *
+   * @param string|undefined $msg
+   *   The confirmation message, without trailing line feed.
+   *
+   * @return bool
+   *   Returns TRUE if Yes, FALSE if No.
+   */
+  protected function askConfirmation($msg = "Are you sure?") {
+    if ($this->commandOptions['yes']) {
+      return TRUE;
+    }
+    while (TRUE) {
+      print $msg . " [y/n] ";
+      flush();
+      ob_flush();
+      $response = strtolower(trim(fgets(STDIN)));
+      if ($response === 'y' || $response === 'yes') {
+        return TRUE;
+      }
+      if ($response === 'n' || $response === 'no') {
+        return FALSE;
+      }
+    }
   }
 
 }

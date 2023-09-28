@@ -128,13 +128,19 @@ class ContactTrash extends Base {
     $contact_ids = $this->getContactsIds();
     $total = count($contact_ids);
     $this->log("\n");
-    $this->log('Number of found contact IDs: ' . $total);
+    $this->log('Number of found contact IDs: ' . $total . "\n");
 
     if ($this->commandOptions['max']) {
       $total = min($total, $this->commandOptions['max']);
       $this->log("\n");
       $this->log("Max param provided, we will stop after " . $total . "\n");
       $this->log("\n");
+    }
+
+    if (!$this->askConfirmation("Do you want to process?")) {
+      $this->log("\n");
+      $this->log("Aborting.\n");
+      return;
     }
 
     $progress = new ProgressBar($total, $this);
