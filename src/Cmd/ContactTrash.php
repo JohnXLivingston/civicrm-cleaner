@@ -162,9 +162,17 @@ class ContactTrash extends Base {
       return;
     }
 
+    $this->setSigintHandler();
+
     $progress = new ProgressBar($total, $this);
 
     foreach ($contact_ids as $id) {
+      if ($this->stopAsked) {
+        $progress->progress();
+        $this->log("\n");
+        $this->log("SIGINT was intercepted, stopping...\n");
+        break;
+      }
       if ($progress->currentStep() >= $total) {
         // Force print the progress:
         $progress->progress();

@@ -50,6 +50,16 @@ class Base {
   private $fpOutput;
 
   /**
+   * TRUE when a CTRL+C was intercepted.
+   *
+   * The script must stop at next loop.
+   * NULL if the child class did not use this functionnality.
+   *
+   * @var bool|null
+   */
+  protected $stopAsked = NULL;
+
+  /**
    * Contructor.
    */
   public function __construct($parser_result) {
@@ -90,6 +100,9 @@ class Base {
    * Starts the process.
    */
   public function start() {
+    // Required if the child class uses setSigintHandler:
+    declare(ticks = 1);
+
     $this->log("Starting...\n");
     // Opening the output file:
     $this->fpOutput = fopen($this->outputFilePath, 'a');
@@ -104,6 +117,11 @@ class Base {
   public function stop() {
     $this->log("Closing output file...\n");
     fclose($this->fpOutput);
+
+    if ($this->stopAsked !== NULL) {
+      // Restoring default signal handler:
+      pcntl_signal(SIGINT, SIG_DFL);
+    }
   }
 
   /**
@@ -160,6 +178,22 @@ class Base {
         return FALSE;
       }
     }
+  }
+
+  /**
+   * To be called by the childclass when the loop begins, to set SIGINT handler.
+   */
+  protected function setSigintHandler() {
+    $this->stopAsked = FALSE;
+    // Catching CTRL+C to nicely end current loop.
+    pcntl_signal(SIGINT, [&$this, "interceptSigint"]);
+  }
+
+  /**
+   * Handler for SIGINT signal.
+   */
+  public function interceptSigint($signal) {
+    $this->stopAsked = TRUE;
   }
 
 }
