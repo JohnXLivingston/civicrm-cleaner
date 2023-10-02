@@ -128,6 +128,13 @@ class ContactTrash extends Base {
       'optional' => TRUE,
       'long_name' => '--stop-at',
     ]);
+
+    $command->addOption('after_id', [
+      'description' => 'Will only query ContactId strictly superior to the given value.',
+      'action' => 'StoreInt',
+      'optional' => TRUE,
+      'long_name' => '--after-id',
+    ]);
   }
 
   /**
@@ -283,6 +290,12 @@ class ContactTrash extends Base {
       ->addSelect('contact.id')
       ->addWhere('is_deleted', '=', TRUE)
       ->addOrderBy('id', 'ASC');
+
+    if ($this->commandOptions['after_id']) {
+      $after = $this->commandOptions['after_id'];
+      $this->log('The script will only get ContactId > ' . $after . "\n");
+      $this->getContactIdsAPI->addWhere('id', '>', $after);
+    }
 
     if ($this->verbose) {
       $this->getContactIdsAPI->setDebug(TRUE);
