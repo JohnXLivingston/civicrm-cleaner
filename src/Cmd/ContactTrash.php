@@ -194,6 +194,7 @@ class ContactTrash extends Base {
       }
 
       $line = $this->newResultLine($id);
+      $line['date'] = date("Y-m-d H:i:s");
 
       $contact = Contact::get()
         ->setCheckPermissions(FALSE)
@@ -333,6 +334,7 @@ class ContactTrash extends Base {
     $line = [];
     $line['id'] = '' . $id;
     $line['name'] = '';
+    $line['date'] = '';
     $line['error'] = '';
     $line['deleted'] = 'N';
     return $line;
