@@ -333,6 +333,7 @@ class ContactTrash extends Base {
   private function newResultLine($id) {
     $line = [];
     $line['id'] = '' . $id;
+    $line['run_mode'] = $this->runMode;
     $line['name'] = '';
     $line['date'] = '';
     $line['error'] = '';
